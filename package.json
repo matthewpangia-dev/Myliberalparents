@@ -1,0 +1,9 @@
+{
+  "name": "myliberalparents",
+  "version": "1.0.0",
+  "description": "MLP — a satirical Trump Derangement translator",
+  "private": true,
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.39.0"
+  }
+}

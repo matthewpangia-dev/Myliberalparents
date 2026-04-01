@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MyLiberalParents</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Source+Serif+4:ital,wght@0,300;0,400;1,300&family=Impact&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --cream: #faf8f2;
+      --ink: #1a1a1a;
+      --accent: #2c4a7c;
+      --rule: #c8b89a;
+      --angry-red: #cc0000;
+      --angry-bg: #1a0000;
+      --angry-yellow: #ffd700;
+      --angry-orange: #ff6600;
+    }
+
+    body {
+      font-family: 'Source Serif 4', Georgia, serif;
+      background: var(--cream);
+      color: var(--ink);
+      min-height: 100vh;
+      transition: background 0.4s, color 0.4s;
+    }
+
+    body.angry {
+      background: var(--angry-bg);
+      color: var(--angry-yellow);
+    }
+
+    /* ── CALM STATE ── */
+    .calm-wrapper {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 60px 24px 80px;
+    }
+
+    .masthead {
+      text-align: center;
+      border-bottom: 3px double var(--rule);
+      padding-bottom: 24px;
+      margin-bottom: 40px;
+    }
+
+    .masthead .kicker {
+      font-size: 11px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 10px;
+    }
+
+    .masthead h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2rem, 6vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--ink);
+    }
+
+    .masthead .tagline {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 1rem;
+      color: #666;
+      margin-top: 10px;
+    }
+
+    .prompt-label {
+      font-size: 13px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      border: 1px solid #c8b89a;
+      border-radius: 2px;
+      background: #fff;
+      color: var(--ink);
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.1rem;
+      line-height: 1.6;
+      padding: 16px 18px;
+      resize: vertical;
+      min-height: 110px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: #bbb; font-style: italic; }
+
+    .submit-btn {
+      display: block;
+      margin: 20px auto 0;
+      padding: 14px 48px;
+      background: var(--accent);
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem;
+      letter-spacing: 1px;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .submit-btn:hover { background: #1e3560; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { background: #aaa; cursor: not-allowed; }
+
+    .loading-text {
+      text-align: center;
+      font-style: italic;
+      color: #888;
+      margin-top: 24px;
+      font-size: 0.95rem;
+      min-height: 24px;
+    }
+
+    .footer-rule {
+      border: none;
+      border-top: 1px solid var(--rule);
+      margin: 60px 0 20px;
+    }
+
+    .footer-note {
+      text-align: center;
+      font-size: 11px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #bbb;
+    }
+
+    /* ── ANGRY STATE ── */
+    .angry-wrapper {
+      display: none;
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 40px 24px 80px;
+      text-align: center;
+    }
+
+    body.angry .calm-wrapper { display: none; }
+    body.angry .angry-wrapper { display: block; }
+
+    .trump-face {
+      font-size: clamp(80px, 18vw, 140px);
+      line-height: 1;
+      margin-bottom: 10px;
+      animation: wobble 0.6s ease-in-out infinite alternate;
+      filter: drop-shadow(0 0 20px rgba(255,100,0,0.6));
+    }
+
+    @keyframes wobble {
+      from { transform: rotate(-2deg) scale(1); }
+      to   { transform: rotate(2deg) scale(1.04); }
+    }
+
+    .angry-header {
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      font-size: clamp(1rem, 4vw, 1.4rem);
+      color: var(--angry-orange);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 30px;
+    }
+
+    .angry-output {
+      background: #2a0000;
+      border: 3px solid var(--angry-red);
+      border-radius: 4px;
+      padding: 32px 28px;
+      margin: 0 auto 32px;
+      max-width: 640px;
+      position: relative;
+      box-shadow: 0 0 40px rgba(200,0,0,0.3);
+    }
+
+    .angry-output::before {
+      content: '❗';
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 28px;
+    }
+
+    .angry-output p {
+      font-family: 'Source Serif 4', serif;
+      font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+      line-height: 1.7;
+      color: #fff;
+    }
+
+    .hashtag-strip {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 36px;
+    }
+
+    .hashtag-strip span {
+      font-family: 'Impact', sans-serif;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      color: var(--angry-yellow);
+      background: #3a0000;
+      border: 1px solid #660000;
+      padding: 4px 12px;
+      border-radius: 2px;
+      text-transform: uppercase;
+    }
+
+    .try-again-btn {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 14px 48px;
+      background: var(--angry-red);
+      color: #fff;
+      font-family: 'Impact', sans-serif;
+      font-size: 1rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 2px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 0 20px rgba(200,0,0,0.4);
+    }
+
+    .try-again-btn:hover { background: #ff0000; }
+    .try-again-btn:active { transform: scale(0.97); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 480px) {
+      .calm-wrapper { padding: 40px 18px 60px; }
+      .masthead h1 { font-size: 1.8rem; }
+      .angry-output { padding: 24px 18px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CALM INPUT STATE -->
+  <div class="calm-wrapper">
+    <div class="masthead">
+      <div class="kicker">A Public Service</div>
+      <h1>MyLiberalParents</h1>
+      <p class="tagline">Translating everyday life into acute political despair since 2025.</p>
+    </div>
+
+    <p class="prompt-label">Type anything. Anything at all.</p>
+    <textarea id="inputText" placeholder="e.g. I made pancakes this morning..."></textarea>
+
+    <button class="submit-btn" id="submitBtn" onclick="generate()">Translate →</button>
+    <p class="loading-p loading-text" id="loadingText"></p>
+
+    <hr class="footer-rule" />
+    <p class="footer-note">No topic is safe from the discourse. &nbsp;|&nbsp; MLP &copy; 2025</p>
+  </div>
+
+  <!-- ANGRY OUTPUT STATE -->
+  <div class="angry-wrapper">
+    <div class="trump-face">🍊</div>
+    <p class="angry-header">⚡ ALERT: EVERYTHING IS TRUMP'S FAULT ⚡</p>
+
+    <div class="angry-output">
+      <p id="outputText"></p>
+    </div>
+
+    <div class="hashtag-strip" id="hashtagStrip">
+      <span>#Resistance</span>
+      <span>#NotMyPresident</span>
+      <span>#DemocracyDying</span>
+      <span>#ImpeachNow</span>
+      <span>#TrumpDerangement</span>
+    </div>
+
+    <button class="try-again-btn" onclick="reset()">← Try Another Topic</button>
+  </div>
+
+  <script>
+    const loadingLines = [
+      "Consulting the New York Times editorial board…",
+      "Cross-referencing with the Mueller Report…",
+      "Adjusting the resistance level…",
+      "Checking with our sources at The Atlantic…",
+      "Normalizing the outrage…",
+      "Verifying the dog whistles…",
+      "Consulting Rachel Maddow's notes…",
+      "Running through the Chomsky filter…",
+    ];
+
+    let loadingInterval = null;
+
+    async function generate() {
+      const input = document.getElementById('inputText').value.trim();
+      if (!input) return;
+
+      const btn = document.getElementById('submitBtn');
+      const loadingEl = document.getElementById('loadingText');
+
+      btn.disabled = true;
+      let i = 0;
+      loadingEl.textContent = loadingLines[0];
+      loadingInterval = setInterval(() => {
+        i = (i + 1) % loadingLines.length;
+        loadingEl.textContent = loadingLines[i];
+      }, 1400);
+
+      try {
+        const res = await fetch('/.netlify/functions/generate', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ input })
+        });
+
+        const data = await res.json();
+
+        clearInterval(loadingInterval);
+        loadingEl.textContent = '';
+
+        if (data.output) {
+          document.getElementById('outputText').textContent = data.output;
+          document.body.classList.add('angry');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          loadingEl.textContent = 'Something went wrong. The system is experiencing unprecedented levels of despair.';
+        }
+      } catch (err) {
+        clearInterval(loadingInterval);
+        loadingEl.textContent = 'Network error. Probably Trump's fault.';
+      }
+
+      btn.disabled = false;
+    }
+
+    function reset() {
+      document.body.classList.remove('angry');
+      document.getElementById('inputText').value = '';
+      document.getElementById('outputText').textContent = '';
+      document.getElementById('loadingText').textContent = '';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('inputText').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) generate();
+    });
+  </script>
+</body>
+</html>
