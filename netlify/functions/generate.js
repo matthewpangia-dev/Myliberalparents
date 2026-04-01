@@ -31,6 +31,17 @@ exports.handler = async (event) => {
     return { statusCode: 400, body: JSON.stringify({ error: 'Invalid input' }) };
   }
 
+  const headers = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 204, headers, body: '' };
+  }
+
   try {
     const message = await client.messages.create({
       model: 'claude-haiku-4-5',
@@ -47,13 +58,14 @@ exports.handler = async (event) => {
     const output = message.content[0].text;
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ output })
     };
   } catch (err) {
     console.error(err);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ error: 'Generation failed' })
     };
   }
